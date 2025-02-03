@@ -9,6 +9,12 @@ screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 screen_size = screen.get_size()
 pygame.display.set_caption('COBRINHA')
 
+def get_direction_and_distance(target:Vector2, self_pos:Vector2):
+    direction = target - self_pos
+    distance = direction.length()
+
+    return (direction, distance)
+
 # Comida
 class Food():
     def __init__(self, screen:pygame.Surface, pos:Vector2, color=WHITE):
@@ -39,8 +45,7 @@ class Segments:
     def collision(self, target:Food):
         screen_size = self.screen.get_size()
 
-        direction = target.pos - self.pos
-        distance = direction.length()
+        distance = get_direction_and_distance(target.pos, self.pos)[1]
 
         if distance <= target.radius + self.radius and self.ishead:
             target.eaten = True
@@ -53,8 +58,7 @@ class Segments:
 
     # Faz o segmento seguir determinado objeto
     def move(self, target:Vector2, easing=0.5):
-        direction = target - self.pos
-        distance = direction.length()
+        direction, distance = get_direction_and_distance(target, self.pos)
 
         if distance > self.radius:
             self.pos += direction * easing
